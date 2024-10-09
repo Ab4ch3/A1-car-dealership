@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -17,8 +18,8 @@ export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 
   @Post()
-  create(@Body() dataCar: CreateCarDto) {
-    return this.carsService.create(dataCar);
+  create(@Body() createCarDto: CreateCarDto) {
+    return this.carsService.create(createCarDto);
   }
 
   @Get()
@@ -27,16 +28,16 @@ export class CarsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.carsService.findOneById(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateDataCar: UpdateCarDto,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateCarDto: UpdateCarDto,
   ) {
-    return this.carsService.updateCar(id, updateDataCar);
+    return this.carsService.updateCar(id, updateCarDto);
   }
 
   @Delete(':id')

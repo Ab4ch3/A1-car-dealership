@@ -1,37 +1,49 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCarDto } from './dto/create-car.dto';
-import { UpdateCarDto } from './dto/update-car.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
+import { CreateCarDto, UpdateCarDto } from './dto';
+import { ICar } from './interfaces/car.interface';
 
 @Injectable()
 export class CarsService {
-  private cars = [
+  private cars: ICar[] = [
+    //quiere decir que esto es un arrays de Interface Car
     {
-      id: 1,
+      id: uuid(),
       brand: 'Toyota',
       model: 'Corolla',
     },
     {
-      id: 2,
+      id: uuid(),
       brand: 'Honda',
       model: 'Civic',
     },
     {
-      id: 3,
+      id: uuid(),
       brand: 'Jeep',
       model: 'Cherokee',
     },
   ];
 
-  public async create(dataCar: CreateCarDto) {
-    console.log(dataCar);
-    return await `This action adds a new car ${dataCar}`;
+  public async create(createCarDto: CreateCarDto) {
+    const newCar: ICar = {
+      id: uuid(),
+      ...createCarDto,
+    };
+
+    this.cars.push(newCar);
+
+    return await newCar;
   }
 
   public async findAllCars() {
     return await this.cars;
   }
 
-  public async findOneById(id: number) {
+  public async findOneById(id: string) {
     const car = await this.cars.find((car) => car.id === id);
 
     if (!car) throw new NotFoundException(`Car With id ${id} not found`);
@@ -39,8 +51,25 @@ export class CarsService {
     return car;
   }
 
-  public async updateCar(id: number, updateDataCar: UpdateCarDto) {
-    return await `This action updates a #${id} ${updateDataCar} car`;
+  public async updateCar(id: string, updateCarDto: UpdateCarDto) {
+    let carDB = this.findOneById(id);
+
+    if (updateCarDto.id && updateCarDto.id !== id)
+      throw new BadRequestException(`Car id is not valid inside body`);
+
+    this.cars = this.cars.map((car): any => {
+      if (car.id === id) {
+        carDB = {
+          id,
+          ...carDB,
+          ...updateCarDto,
+        };
+        return carDB;
+      }
+      return car;
+    });
+
+    return carDB;
   }
 
   public async deleteCar(id: number) {
