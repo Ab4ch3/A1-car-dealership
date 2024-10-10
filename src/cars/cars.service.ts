@@ -72,7 +72,10 @@ export class CarsService {
     return carDB;
   }
 
-  public async deleteCar(id: number) {
-    return await `This action removes a #${id} car`;
+  public async deleteCar(id: string) {
+    this.findOneById(id);
+
+    this.cars = this.cars.filter((car) => car.id !== id);
+    return `Success`;
   }
 }

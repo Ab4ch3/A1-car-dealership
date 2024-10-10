@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Patch,
   Post,
@@ -41,7 +40,7 @@ export class CarsController {
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.carsService.deleteCar(id);
   }
 }
