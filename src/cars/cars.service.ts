@@ -11,21 +11,11 @@ import { ICar } from './interfaces/car.interface';
 export class CarsService {
   private cars: ICar[] = [
     //quiere decir que esto es un arrays de Interface Car
-    {
-      id: uuid(),
-      brand: 'Toyota',
-      model: 'Corolla',
-    },
-    {
-      id: uuid(),
-      brand: 'Honda',
-      model: 'Civic',
-    },
-    {
-      id: uuid(),
-      brand: 'Jeep',
-      model: 'Cherokee',
-    },
+    // {
+    //   id: uuid(),
+    //   brand: 'Toyota',
+    //   model: 'Corolla',
+    // },
   ];
 
   public async create(createCarDto: CreateCarDto) {
@@ -77,5 +67,9 @@ export class CarsService {
 
     this.cars = this.cars.filter((car) => car.id !== id);
     return `Success`;
+  }
+
+  async fillCarsWithSeedData(cars: ICar[]) {
+    this.cars = cars;
   }
 }
